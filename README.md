@@ -1,17 +1,27 @@
 [Readme and repository is work in progress]
 
 # StateMachineController
-StateMachineController is a finite state machine (FSM) controller for Unity.
+StateMachineController is a finite state machine (FSM) controller for Unity. Divide your game logic to different state machines and let StateMachineController handle updating them.
+
+Changing a state is simple!
+
+call `this.StateMachine.ChangeState((int)BattleMode.MOVING, (object)null);`
+
+Need to pass custom data to the next state?
+
+call `this.StateMachine.ChangeState((int)BattleMode.END_BATTLE, BattleData);`
+
+To change state machine:
+
+call `this.StateMachine.ChangeStateMachine(StateMachineType.SHOP);`
 
 #### Features
-* A single class (StateMachineController) to run all your state machines
-    * Runs Update(), FixedUpdate() and LateUpdate() for all your state machines
+* A single class to run all your state machines
+    * StateMachineController runs Update(), FixedUpdate() and LateUpdate() for all your state machines
 * MasterStateMachine that can hold multiple state machines
     * Individual state machines can call MasterStateMachine to change the active state machine
 * StateMachineController can run multiple MasterStateMachines
-
 * Pass your own data to other states when changing states
-
 1) Bundle your custom data in one state
 ```
 // Bundle your custom data
@@ -43,7 +53,6 @@ public override void EnterState<T>(T message)
 ```
 
 ## Classes
-
 ### StateMachineController
 Holds a collection of MasterStateMachines and calls their Update(), FixedUpdate() and LateUpdate() methods.
 
