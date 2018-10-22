@@ -1,26 +1,7 @@
-﻿using UnityEngine;
-
-namespace SMC
+﻿namespace SMC
 {
     using System.Collections.Generic;
-
-    /// <summary>
-    /// 
-    /// MasterStateMachine can hold either a single or multiple state machines.
-    ///
-    /// EXAMPLE - A turn-based game: 
-    /// For example: in a turn-based game there could be one state machine for EXPLORATION_MODE and one BATTLE_MODE.
-    /// A single MasterStateMachine could have a reference to these two state machines.
-    ///
-    /// Example scenario for changing state machines:
-    /// 
-    ///     EXPLORATION_MODE StateMachine is currently active.
-    ///         -> Battle with enemy is triggered! Call ChangeStateMachine(BATTLE_MODE) to change the StateMachine;
-    ///     BATTLE_MODE StateMachine is currently active.
-    ///         -> Battle is won! Call ChangeStateMachine(EXPLORATION_MODE) to change back to EXPLORATION_MODE StateMachine;
-    ///     EXPLORATION_MODE StateMachine is currently active. 
-    /// 
-    /// </summary>
+    using UnityEngine;
 
     public class MasterStateMachine
     {
@@ -44,6 +25,10 @@ namespace SMC
             this.currentStateMachine = stateMachine;
         }
 
+        /// <summary>
+        /// Runs Unity's Update() method for the current active StateMachine.
+        /// IMPORTANT: This method must be called from StateMachineController!
+        /// </summary>
         internal void Tick()
         {
             if (this.currentStateMachine == null)
@@ -54,6 +39,10 @@ namespace SMC
             this.currentStateMachine.Tick();
         }
 
+        /// <summary>
+        /// Runs Unity's FixedUpdate() method for the current active StateMachine.
+        /// IMPORTANT: This method must be called from StateMachineController!
+        /// </summary>
         internal void FixedTick()
         {
             if (this.currentStateMachine == null)
@@ -64,6 +53,10 @@ namespace SMC
             this.currentStateMachine.FixedTick();
         }
 
+        /// <summary>
+        /// Runs Unity's LateUpdate() method for the current active StateMachine.
+        /// IMPORTANT: This method must be called from StateMachineController!
+        /// </summary>
         internal void LateTick()
         {
             if (this.currentStateMachine == null)

@@ -3,12 +3,9 @@
     using System.Collections.Generic;
 
     /// <summary>
-    /// 
     /// StateMachineController holds a reference to all MasterStateMachines and is
     /// responsible of running their Update(), FixedUpdate() and LateUpdate() methods. 
-    /// 
     /// </summary>
-
     public class StateMachineController
     {
         private List<MasterStateMachine> masterStateMachines = null;
@@ -28,7 +25,7 @@
         
         /// <summary>
         /// Runs Unity's Update() method for each MasterStateMachine.
-        /// IMPORTANT: This method must be called from Update()
+        /// IMPORTANT: This method must be called from Update()!
         /// </summary>
         internal void Tick()
         {
@@ -40,7 +37,7 @@
 
         /// <summary>
         /// Runs Unity's FixedUpdate() method for each MasterStateMachine.
-        /// IMPORTANT: This method must be called from FixedUpdate()
+        /// IMPORTANT: This method must be called from FixedUpdate()!
         /// </summary>
         internal void FixedTick()
         {
@@ -52,7 +49,7 @@
 
         /// <summary>
         /// Runs Unity's LateUpdate() method for each MasterStateMachine.
-        /// IMPORTANT: This method must be called from LateUpdate()
+        /// IMPORTANT: This method must be called from LateUpdate()!
         /// </summary>
         internal void LateTick()
         {

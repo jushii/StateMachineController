@@ -33,7 +33,7 @@
 
 		/// <summary>
 		/// Runs Unity's Update() method for the current active state.
-		/// IMPORTANT: This method must be called from Update()
+		/// IMPORTANT: This method must be called from MasterStateMachine!
 		/// </summary>
 		internal void Tick()
 		{
@@ -45,11 +45,11 @@
 			this.CurrentState.Tick();
 		}
 
-		/// <summary>
-		/// Runs Unity's FixedUpdate() method for the current active state.
-		/// IMPORTANT: This method must be called from FixedUpdate()
-		/// </summary>
-		internal void FixedTick()
+        /// <summary>
+        /// Runs Unity's FixedUpdate() method for the current active state.
+        /// IMPORTANT: This method must be called from MasterStateMachine!
+        /// </summary>
+        internal void FixedTick()
 		{
 			if (this.CurrentState == null)
 			{
@@ -59,11 +59,11 @@
 			this.CurrentState.FixedTick();
 		}
 
-		/// <summary>
-		/// Runs Unity's LateUpdate() method for the current active state.
-		/// IMPORTANT: This method must be called from LateUpdate()
-		/// </summary>
-		internal void LateTick()
+        /// <summary>
+        /// Runs Unity's LateUpdate() method for the current active state.
+        /// IMPORTANT: This method must be called from MasterStateMachine!
+        /// </summary>
+        internal void LateTick()
 		{
 			if (this.CurrentState == null)
 			{

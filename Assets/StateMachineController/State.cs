@@ -1,11 +1,8 @@
 ﻿namespace SMC
 {
     /// <summary>
-    /// 
     /// State is controlled by a StateMachine.
-    /// 
     /// </summary>
-
     public abstract class State
     {
         protected StateMachine StateMachine { get; set; }
@@ -21,12 +18,13 @@
         public abstract void EnterState<T>(T message);
 
         /// <summary>
-        /// Last method called before exiting the state.
+        /// ExitState is called before exiting the state.
         /// </summary>
         public abstract void ExitState();
 
         /// <summary>
-        /// Runs in Unity's Update()
+        /// Runs Unity's Update() method.
+        /// IMPORTANT: Must be called from StateMachine!
         /// </summary>
         internal virtual void Tick()
         {
@@ -34,7 +32,8 @@
         }
 
         /// <summary>
-        /// Runs FixedUpdate()
+        /// Runs Unity's FixedUpdate() method.
+        /// IMPORTANT: Must be called from StateMachine!
         /// </summary>
         internal virtual void FixedTick()
         {
@@ -42,7 +41,8 @@
         }
 
         /// <summary>
-        /// Runs LateUpdate()
+        /// Runs Unity's LateUpdate() method.
+        /// IMPORTANT: Must be called from StateMachine!
         /// </summary>
         internal virtual void LateTick()
         {
