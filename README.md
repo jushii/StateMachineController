@@ -1,6 +1,6 @@
 [Readme and repository is work in progress]
 
-# StateMachineController
+# StateMachineController (for Unity)
 StateMachineController is a finite state machine (FSM) controller for Unity. Divide your game logic to different state machines and let StateMachineController handle updating them.
 
 Changing a state is simple!
