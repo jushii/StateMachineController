@@ -10,6 +10,22 @@ StateMachineController is a finite state machine (FSM) controller for Unity.
     * Individual state machines can call MasterStateMachine to change the active state machine
 * StateMachineController can run multiple MasterStateMachines
 
+* Pass your own data to other states when changing states
+
+`// Create a message`
+
+`CastSkillMessage msg = new CastSkillMessage();`
+
+`msg.User = this.user;`
+
+`msg.Target = this.target;`
+
+`msg.Skill = this.skill;`
+
+`// Pass the message to the next state`
+
+`this.StateMachine.ChangeState((int)BattleModeState.CASTING_SKILL, msg);`
+
 ## Classes
 
 ### StateMachineController
