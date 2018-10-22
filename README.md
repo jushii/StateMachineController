@@ -12,19 +12,15 @@ StateMachineController is a finite state machine (FSM) controller for Unity.
 
 * Pass your own data to other states when changing states
 
-`// Create a message`
-
-`CastSkillMessage msg = new CastSkillMessage();`
-
-`msg.User = this.user;`
-
-`msg.Target = this.target;`
-
-`msg.Skill = this.skill;`
-
-`// Pass the message to the next state`
-
-`this.StateMachine.ChangeState((int)BattleModeState.CASTING_SKILL, msg);`
+```
+// Bundle your custom data
+CastSkillMessage msg = new CastSkillMessage();
+msg.User = this.user;
+msg.Target = this.target;
+msg.Skill = this.skill;
+// Pass the data to the next state
+this.StateMachine.ChangeState((int)BattleModeState.CASTING_SKILL, msg);
+```
 
 ## Classes
 
