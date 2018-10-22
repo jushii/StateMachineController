@@ -20,8 +20,7 @@ call `this.StateMachine.ChangeStateMachine(StateMachineType.SHOP);`
     * StateMachineController runs Update(), FixedUpdate() and LateUpdate() for all your state machines
 * MasterStateMachine that can hold multiple state machines
     * Individual state machines can call MasterStateMachine to change the active state machine
-    * You can also have multiple MasterStateMachines running at the same time!
-* StateMachineController can run multiple MasterStateMachines
+    * You can have multiple MasterStateMachines running at the same time!
 * Pass your own data to other states when changing states
 1) Bundle your custom data in one state
 ```
