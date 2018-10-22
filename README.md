@@ -1,5 +1,14 @@
+[Description is work in progress]
+
 # StateMachineController
-StateMachineController is a controller for running multiple state machines (FSM).
+StateMachineController is a finite state machine (FSM) controller for Unity.
+
+#### Features
+* A single class (StateMachineController) to run all your state machines
+    * Runs Update(), FixedUpdate() and LateUpdate() for all your state machines
+* MasterStateMachine that can hold multiple state machines
+    * Individual state machines can call MasterStateMachine to change the active state machine
+* StateMachineController can run multiple MasterStateMachines
 
 ## Classes
 
