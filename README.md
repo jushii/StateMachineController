@@ -1,7 +1,7 @@
-[Readme and repository is work in progress]
+[readme and repository are work in progress]
 
 # StateMachineController (for Unity)
-StateMachineController is a finite state machine (FSM) controller for Unity. Divide your game logic to different state machines and let StateMachineController handle updating them.
+StateMachineController is a finite state machine (FSM) controller for Unity. Divide your game logic multiple state machines and let StateMachineController take care of running their Update methods.
 
 Changing a state is simple!
 
@@ -11,16 +11,16 @@ Need to pass custom data to the next state?
 
 call `this.StateMachine.ChangeState((int)BattleMode.END_BATTLE, BattleData);`
 
-To change state machine:
+Want to change the active state machine?
 
 call `this.StateMachine.ChangeStateMachine(StateMachineType.SHOP);`
 
 #### Features
-* A single class to run all your state machines
-    * StateMachineController runs Update(), FixedUpdate() and LateUpdate() for all your state machines
-* MasterStateMachine that can hold multiple state machines
-    * Individual state machines can call MasterStateMachine to change the active state machine
-    * You can have multiple MasterStateMachines running at the same time!
+* A single class for updating all your state machines
+    * StateMachineController class runs Update(), FixedUpdate() and LateUpdate() for all your state machines
+* MasterStateMachine class can hold multiple state machines (or just one)
+    * StateMachine can call MasterStateMachine to change the active state machine
+    * You can have multiple MasterStateMachines running at the same time
 * Pass your own data to other states when changing states
 1) Bundle your custom data in one state
 ```
@@ -29,7 +29,7 @@ CastSkillMessage msg = new CastSkillMessage();
 msg.User = this.user;
 msg.Target = this.target;
 msg.Skill = this.skill;
-// Pass the data to the next state
+// Pass the data to the next state as a parameter
 this.StateMachine.ChangeState((int)BattleModeState.CASTING_SKILL, msg);
 ```
 2) Verify and use your data in the next state
@@ -44,7 +44,6 @@ public override void EnterState<T>(T message)
   }
 
   this.msg = msg;
-
   this.msg.Skill.Resolve(this.msg.User, this.msg.Target, () => 
   {
       Debug.Log("apply effects");
