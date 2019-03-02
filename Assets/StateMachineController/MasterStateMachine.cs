@@ -1,96 +1,107 @@
-﻿namespace SMC
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class MasterStateMachine
 {
-    using System.Collections.Generic;
-    using UnityEngine;
+    private List<StateMachine> stateMachines = new List<StateMachine>();
+    private StateMachine currentStateMachine;
+    private StateMachine previousStateMachine;
 
-    public class MasterStateMachine
+    /// <summary>
+    /// Add a new StateMachine.
+    /// </summary>
+    /// <param name="stateMachine">StateMachine to add.</param>
+    internal void AddStateMachine(StateMachine stateMachine)
     {
-        internal Dictionary<StateMachineType, StateMachine> stateMachines;
-
-        private StateMachine currentStateMachine = null;
-        private StateMachine previousStateMachine = null;
-
-        public MasterStateMachine()
+        Type stateMachineType = stateMachine.GetType();
+        for (int i = 0; i < this.stateMachines.Count; i++)
         {
-            this.stateMachines = new Dictionary<StateMachineType, StateMachine>();
-        }
-
-        internal void AddStateMachine(StateMachineType stateMachineType, StateMachine stateMachine)
-        {
-            this.stateMachines.Add(stateMachineType, stateMachine);
-        }
-        
-        internal void SetStartingStateMachine(StateMachine stateMachine)
-        {
-            this.currentStateMachine = stateMachine;
-        }
-
-        /// <summary>
-        /// Runs Unity's Update() method for the current active StateMachine.
-        /// IMPORTANT: This method must be called from StateMachineController!
-        /// </summary>
-        internal void Tick()
-        {
-            if (this.currentStateMachine == null)
+            if (this.stateMachines[i].GetType() == stateMachineType)
             {
+                Debug.LogError("@MasterStateMachine: Trying to add multiple StateMachines of same type.");
                 return;
             }
-
-            this.currentStateMachine.Tick();
         }
 
-        /// <summary>
-        /// Runs Unity's FixedUpdate() method for the current active StateMachine.
-        /// IMPORTANT: This method must be called from StateMachineController!
-        /// </summary>
-        internal void FixedTick()
+        this.stateMachines.Add(stateMachine);
+    }
+
+    internal void InitialiseStartingStateMachine(Type stateMachineType, Type stateType, object args = null)
+    {
+        for (int i = 0; i < this.stateMachines.Count; i++)
         {
-            if (this.currentStateMachine == null)
+            if (this.stateMachines[i].GetType() == stateMachineType)
             {
+                ChangeStateMachine(stateMachineType, stateType, args);
                 return;
             }
-
-            this.currentStateMachine.FixedTick();
         }
 
-        /// <summary>
-        /// Runs Unity's LateUpdate() method for the current active StateMachine.
-        /// IMPORTANT: This method must be called from StateMachineController!
-        /// </summary>
-        internal void LateTick()
+        Debug.LogError("@MasterStateMachine: Could not initialize starting StateMachine.");
+        return;
+    }
+
+    /// <summary>
+    /// Run Update.
+    /// </summary>
+    internal void Tick()
+    {
+        this.currentStateMachine?.Tick();
+    }
+
+    /// <summary>
+    /// Run FixedUpdate.
+    /// </summary>
+    internal void FixedTick()
+    {
+        this.currentStateMachine?.FixedTick();
+    }
+
+    /// <summary>
+    /// Run LateUpdate.
+    /// </summary>
+    internal void LateTick()
+    {
+        this.currentStateMachine?.LateTick();
+    }
+
+    /// <summary>
+    /// Change the active StateMachine.
+    /// </summary>
+    /// <param name="stateMachineType">Type of the StateMachine to change to.</param>
+    /// <param name="stateType">Type of the State the StateMachine begins to run.</param>
+    /// <param name="args">Optional arguments to pass data.</param>
+    /// <returns>Returns true if the StateMachine change was successful.</returns>
+    internal virtual bool ChangeStateMachine(Type stateMachineType, Type stateType, object args = null)
+    {
+        // Return if we try to change to the already active StateMachine.
+        if (this.currentStateMachine != null && this.currentStateMachine.GetType() == stateMachineType)
         {
-            if (this.currentStateMachine == null)
-            {
-                return;
-            }
-
-            this.currentStateMachine.LateTick();
+            Debug.LogWarning("@MasterStateMachine: Trying to change to StateMachine of type: " + stateMachineType + " but it's already the active StateMachine.");
+            return false;
         }
 
-        public virtual bool ChangeStateMachine(StateMachineType stateMachineType)
+        // Find the statemachine by type.
+        for (int i = 0; i < this.stateMachines.Count; i++)
         {
-            if (!this.stateMachines.ContainsKey(stateMachineType))
+            if (this.stateMachines[i].GetType() == stateMachineType)
             {
-                Debug.LogError("@MasterStateMachine: MasterStateMachine doesn't contain  a StateMachine called: " + stateMachineType.ToString());
-                return false;
+                // Exit previous StateMachine.
+                this.previousStateMachine = this.currentStateMachine;
+                if (this.previousStateMachine != null)
+                {
+                    this.previousStateMachine.Exit();
+                }
+
+                // Enter next StateMachine.
+                this.currentStateMachine = this.stateMachines[i];
+                this.currentStateMachine.ChangeState(stateType, args);
+                return true;
             }
-
-            if (this.stateMachines[stateMachineType] == this.currentStateMachine)
-            {
-                Debug.LogError("@MasterStateMachine: StateMachine " + stateMachineType.ToString() + " is already active.");
-                return false;
-            }
-
-            this.previousStateMachine = this.currentStateMachine;
-            if (this.previousStateMachine != null)
-            {
-                this.previousStateMachine.Exit();
-            }
-
-            this.currentStateMachine = this.stateMachines[stateMachineType];
-            this.currentStateMachine.Begin();
-
-            return true;
         }
+
+        Debug.LogWarning("@MasterStateMachine: Can't find StateMachine of type: " + stateMachineType);
+        return false;
     }
 }

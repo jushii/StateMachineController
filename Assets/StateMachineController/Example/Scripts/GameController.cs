@@ -1,37 +1,30 @@
 ﻿using UnityEngine;
-using SMC;
 
 public class GameController : MonoBehaviour
 {
-	[SerializeField] private GameUI gameUI = null;
-	[SerializeField] private Player player = null;
+	// Player is assigned in inspector.
+	[SerializeField] private Player player;
 		
-	private StateMachineController stateMachineController = null;
+	private StateMachineController stateMachineController = new StateMachineController();
 
 	private void Awake()
 	{
-		InitialiseStateMachineController();
-	}
-
-	private void InitialiseStateMachineController()
-	{
-		// Create a StateMachineController.
-		this.stateMachineController = new StateMachineController();
-		
-		// Create a MasterStateMachine.
+		// Create a MasterStateMachine (can contain multiple StateMachines).
 		MasterStateMachine masterStateMachine = new MasterStateMachine();
-		
-		// Create a StateMachine for handling player movement.
-		StateMachine playerStateMachine = new PlayerStateMachine(masterStateMachine, this.gameUI, this.player);
-		masterStateMachine.AddStateMachine(StateMachineType.PLAYER_MOVEMENT, playerStateMachine);
-		
-		// Set starting StateMachine for the MasterStateMachine.
-		masterStateMachine.SetStartingStateMachine(playerStateMachine);
-		
+
+		// Create a PlayerStateMachine.
+		PlayerStateMachine playerStateMachine = new PlayerStateMachine(masterStateMachine, this.player);
+
+		// Add PlayerStateMachine to the MasterStateMachine.
+		masterStateMachine.AddStateMachine(playerStateMachine);
+
 		// Add the MasterStateMachine to StateMachineController.
 		this.stateMachineController.AddMasterStateMachine(masterStateMachine);
+
+		// Set PlayerStateMachine as the active StateMachine and StatePlayerIdle as the active State.
+		masterStateMachine.ChangeStateMachine(typeof(PlayerStateMachine), typeof(StatePlayerIdle));
 	}
-	
+
 	private void Update () 
 	{
 		this.stateMachineController.Tick();

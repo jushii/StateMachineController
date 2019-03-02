@@ -1,113 +1,100 @@
-﻿namespace SMC
+﻿using System;
+using System.Collections.Generic;
+
+public class StateMachine
 {
-	using System.Collections.Generic;
+    internal MasterStateMachine masterStateMachine = null;
+    internal State CurrentState { get; set; }
+    internal State PreviousState { get; set; }
+    internal List<State> states = new List<State>();
 
-	public class StateMachine
-	{
-		internal State CurrentState { get; set; }
-		internal State PreviousState { get; set; }
-		
-		internal Dictionary<int, State> States { get; set; }
+    public StateMachine(MasterStateMachine masterStateMachine)
+    {
+        if (masterStateMachine != null)
+        {
+            this.masterStateMachine = masterStateMachine;
+        }
+    }
 
-		private readonly MasterStateMachine masterStateMachine = null;
-		
-		protected StateMachine(MasterStateMachine masterStateMachine)
-		{
-			this.masterStateMachine = masterStateMachine;
-		}
+    internal virtual void Begin(Type stateType, object args)
+    {
+        for (int i = 0; i < this.states.Count; i++)
+        {
+            if (this.states[i].GetType() == stateType)
+            {
+                ChangeState(stateType, args);
+                return;
+            }
+        }
+    }
 
-		internal virtual void InitialiseStates()
-		{
-			this.States = new Dictionary<int, State>();
-		}
+    internal virtual void Exit()
+    {
+        this.CurrentState.ExitState();
+    }
 
-		internal virtual void Begin()
-		{
-			
-		}
+    /// <summary>
+    /// Run Update.
+    /// </summary>
+    internal void Tick()
+    {
+        this.CurrentState?.Tick();
+    }
 
-		internal virtual void Exit()
-		{
-			this.CurrentState.ExitState();
-		}
+    /// <summary>
+    /// Run FixedUpdate.
+    /// </summary>
+    internal void FixedTick()
+    {
+        this.CurrentState?.FixedTick();
+    }
 
-		/// <summary>
-		/// Runs Unity's Update() method for the current active state.
-		/// IMPORTANT: This method must be called from MasterStateMachine!
-		/// </summary>
-		internal void Tick()
-		{
-			if (this.CurrentState == null)
-			{
-				return;
-			}
+    /// <summary>
+    /// Run LateUpdate.
+    /// </summary>
+    internal void LateTick()
+    {
+        this.CurrentState?.LateTick();
+    }
 
-			this.CurrentState.Tick();
-		}
+    public virtual bool ChangeState(Type state, object args = null)
+    {
+        // Check if we are trying to transition to the same state we already are in.
+        if (this.CurrentState != null && this.CurrentState.GetType() == state)
+        {
+            return false;
+        }
 
-        /// <summary>
-        /// Runs Unity's FixedUpdate() method for the current active state.
-        /// IMPORTANT: This method must be called from MasterStateMachine!
-        /// </summary>
-        internal void FixedTick()
-		{
-			if (this.CurrentState == null)
-			{
-				return;
-			}
+        for (int i = 0; i < this.states.Count; i++)
+        {
+            // Found the state we want to transition to.
+            if (this.states[i].GetType() == state)
+            {
+                // Exit previous state.
+                this.PreviousState = this.CurrentState;
+                if (this.PreviousState != null)
+                {
+                    this.PreviousState.ExitState();
+                }
 
-			this.CurrentState.FixedTick();
-		}
+                // Enter the new state.
+                this.CurrentState = this.states[i];
+                this.CurrentState.EnterState(args);
 
-        /// <summary>
-        /// Runs Unity's LateUpdate() method for the current active state.
-        /// IMPORTANT: This method must be called from MasterStateMachine!
-        /// </summary>
-        internal void LateTick()
-		{
-			if (this.CurrentState == null)
-			{
-				return;
-			}
+                return true;
+            }
 
-			this.CurrentState.LateTick();
-		}
+        }
 
-		/// <summary>
-		/// Changes the active State.
-		/// </summary>
-		internal virtual bool ChangeState<T>(int state, T message)
-		{
-			if (!this.States.ContainsKey(state))
-			{
-				return false;
-			}
+        return false;
+    }
 
-			if (this.States[state] == this.CurrentState)
-			{
-				return false;
-			}
-
-			this.PreviousState = this.CurrentState;
-			if (this.PreviousState != null)
-			{
-				this.PreviousState.ExitState();
-			}
-
-			this.CurrentState = this.States[state];
-
-			this.CurrentState.EnterState(message);
-
-			return true;
-		}
-
-		/// <summary>
-		/// Changes the active StateMachine.
-		/// </summary>
-		/// <param name="stateMachineType"></param>
-		internal void ChangeStateMachine(StateMachineType stateMachineType)
-		{
-			this.masterStateMachine.ChangeStateMachine(stateMachineType);
-		}
-	}
+    /// <summary>
+    /// Changes the active StateMachine.
+    /// </summary>
+    /// <param name="stateMachineType"></param>
+    internal void ChangeStateMachine(Type stateMachineType, Type stateType, object args = null)
+    {
+        this.masterStateMachine.ChangeStateMachine(stateMachineType, stateType, args);
+    }
 }

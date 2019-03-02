@@ -1,62 +1,59 @@
-﻿namespace SMC
+﻿using System.Collections.Generic;
+
+/// <summary>
+/// StateMachineController holds a reference to all MasterStateMachines and is
+/// responsible of running their Update(), FixedUpdate() and LateUpdate() methods. 
+/// </summary>
+public class StateMachineController
 {
-    using System.Collections.Generic;
+    private List<MasterStateMachine> masterStateMachines = null;
 
     /// <summary>
-    /// StateMachineController holds a reference to all MasterStateMachines and is
-    /// responsible of running their Update(), FixedUpdate() and LateUpdate() methods. 
+    /// Default constructor.
     /// </summary>
-    public class StateMachineController
+    public StateMachineController()
     {
-        private List<MasterStateMachine> masterStateMachines = null;
+        this.masterStateMachines = new List<MasterStateMachine>();
+    }
 
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        public StateMachineController()
-        {
-            this.masterStateMachines = new List<MasterStateMachine>();
-        }
+    internal void AddMasterStateMachine(MasterStateMachine masterStateMachine)
+    {
+        this.masterStateMachines.Add(masterStateMachine);
+    }
 
-        internal void AddMasterStateMachine(MasterStateMachine masterStateMachine)
+    /// <summary>
+    /// Runs Unity's Update() method for each MasterStateMachine.
+    /// IMPORTANT: This method must be called from Update()!
+    /// </summary>
+    internal void Tick()
+    {
+        for (int i = 0; i < this.masterStateMachines.Count; i++)
         {
-            this.masterStateMachines.Add(masterStateMachine);
+            this.masterStateMachines[i].Tick();
         }
-        
-        /// <summary>
-        /// Runs Unity's Update() method for each MasterStateMachine.
-        /// IMPORTANT: This method must be called from Update()!
-        /// </summary>
-        internal void Tick()
-        {
-            for (int i = 0; i < this.masterStateMachines.Count; i++)
-            {
-                this.masterStateMachines[i].Tick();
-            }
-        }
+    }
 
-        /// <summary>
-        /// Runs Unity's FixedUpdate() method for each MasterStateMachine.
-        /// IMPORTANT: This method must be called from FixedUpdate()!
-        /// </summary>
-        internal void FixedTick()
+    /// <summary>
+    /// Runs Unity's FixedUpdate() method for each MasterStateMachine.
+    /// IMPORTANT: This method must be called from FixedUpdate()!
+    /// </summary>
+    internal void FixedTick()
+    {
+        for (int i = 0; i < this.masterStateMachines.Count; i++)
         {
-            for (int i = 0; i < this.masterStateMachines.Count; i++)
-            {
-                this.masterStateMachines[i].FixedTick();
-            }
+            this.masterStateMachines[i].FixedTick();
         }
+    }
 
-        /// <summary>
-        /// Runs Unity's LateUpdate() method for each MasterStateMachine.
-        /// IMPORTANT: This method must be called from LateUpdate()!
-        /// </summary>
-        internal void LateTick()
+    /// <summary>
+    /// Runs Unity's LateUpdate() method for each MasterStateMachine.
+    /// IMPORTANT: This method must be called from LateUpdate()!
+    /// </summary>
+    internal void LateTick()
+    {
+        for (int i = 0; i < this.masterStateMachines.Count; i++)
         {
-            for (int i = 0; i < this.masterStateMachines.Count; i++)
-            {
-                this.masterStateMachines[i].LateTick();
-            }
+            this.masterStateMachines[i].LateTick();
         }
     }
 }
