@@ -12,11 +12,8 @@ public class GameController : MonoBehaviour
 		// Create a MasterStateMachine (can contain multiple StateMachines).
 		MasterStateMachine masterStateMachine = new MasterStateMachine();
 
-		// Create a PlayerStateMachine.
-		PlayerStateMachine playerStateMachine = new PlayerStateMachine(masterStateMachine, this.player);
-
-		// Add PlayerStateMachine to the MasterStateMachine.
-		masterStateMachine.AddStateMachine(playerStateMachine);
+		// Create a PlayerStateMachine and add it to the MasterStateMachine.
+		masterStateMachine.AddStateMachine(new PlayerStateMachine(masterStateMachine, this.player));
 
 		// Add the MasterStateMachine to StateMachineController.
 		this.stateMachineController.AddMasterStateMachine(masterStateMachine);

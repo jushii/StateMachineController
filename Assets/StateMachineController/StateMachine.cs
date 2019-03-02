@@ -1,33 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
+/// <summary>
+/// StateMachine updates the current State.
+/// </summary>
 public class StateMachine
 {
-    internal MasterStateMachine masterStateMachine = null;
     internal State CurrentState { get; set; }
     internal State PreviousState { get; set; }
-    internal List<State> states = new List<State>();
+
+    protected MasterStateMachine masterStateMachine;
+    protected List<State> states = new List<State>();
 
     public StateMachine(MasterStateMachine masterStateMachine)
     {
-        if (masterStateMachine != null)
-        {
-            this.masterStateMachine = masterStateMachine;
-        }
+        this.masterStateMachine = masterStateMachine;
     }
 
-    internal virtual void Begin(Type stateType, object args)
-    {
-        for (int i = 0; i < this.states.Count; i++)
-        {
-            if (this.states[i].GetType() == stateType)
-            {
-                ChangeState(stateType, args);
-                return;
-            }
-        }
-    }
-
+    /// <summary>
+    /// Exit current state.
+    /// </summary>
     internal virtual void Exit()
     {
         this.CurrentState.ExitState();
@@ -57,40 +50,41 @@ public class StateMachine
         this.CurrentState?.LateTick();
     }
 
-    public virtual bool ChangeState(Type state, object args = null)
+    public virtual bool ChangeState(Type stateType, object args = null)
     {
-        // Check if we are trying to transition to the same state we already are in.
-        if (this.CurrentState != null && this.CurrentState.GetType() == state)
+        // Return if we try to change to the already active State.
+        if (this.CurrentState != null && this.CurrentState.GetType() == stateType)
         {
+            Debug.LogWarning("@StateMachine: Trying to change to State of type: " + stateType + " but it's already the active State.");
             return false;
         }
 
+        // Find the State by type.
         for (int i = 0; i < this.states.Count; i++)
         {
             // Found the state we want to transition to.
-            if (this.states[i].GetType() == state)
+            if (this.states[i].GetType() == stateType)
             {
-                // Exit previous state.
+                // Exit previous State.
                 this.PreviousState = this.CurrentState;
                 if (this.PreviousState != null)
                 {
                     this.PreviousState.ExitState();
                 }
 
-                // Enter the new state.
+                // Enter next State.
                 this.CurrentState = this.states[i];
                 this.CurrentState.EnterState(args);
-
                 return true;
             }
-
         }
 
+        Debug.LogWarning("@StateMachine: Can't find State of type: " + stateType);
         return false;
     }
 
     /// <summary>
-    /// Changes the active StateMachine.
+    /// Change the active StateMachine.
     /// </summary>
     /// <param name="stateMachineType"></param>
     internal void ChangeStateMachine(Type stateMachineType, Type stateType, object args = null)

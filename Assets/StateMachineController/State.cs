@@ -1,5 +1,5 @@
 ﻿/// <summary>
-/// State controlled by a StateMachine.
+/// State is controlled by a StateMachine.
 /// </summary>
 public abstract class State
 {

@@ -82,7 +82,7 @@ public class MasterStateMachine
             return false;
         }
 
-        // Find the statemachine by type.
+        // Find the StateMachine by type.
         for (int i = 0; i < this.stateMachines.Count; i++)
         {
             if (this.stateMachines[i].GetType() == stateMachineType)
