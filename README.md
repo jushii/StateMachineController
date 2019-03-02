@@ -7,7 +7,7 @@ this.StateMachine.ChangeState(typeof(StatePlayerTurn));
 ```
 ##### Example 2 - Passing data when changing the state.
 ```cs
-SpellData spellData = new SpellData
+SpellData spellData = new SpellData()
 {
    attackPower = 120,
    coolDown = 5
