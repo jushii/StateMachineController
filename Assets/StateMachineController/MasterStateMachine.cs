@@ -27,21 +27,6 @@ public class MasterStateMachine
         this.stateMachines.Add(stateMachine);
     }
 
-    internal void InitialiseStartingStateMachine(Type stateMachineType, Type stateType, object args = null)
-    {
-        for (int i = 0; i < this.stateMachines.Count; i++)
-        {
-            if (this.stateMachines[i].GetType() == stateMachineType)
-            {
-                ChangeStateMachine(stateMachineType, stateType, args);
-                return;
-            }
-        }
-
-        Debug.LogError("@MasterStateMachine: Could not initialize starting StateMachine.");
-        return;
-    }
-
     /// <summary>
     /// Run Update.
     /// </summary>
