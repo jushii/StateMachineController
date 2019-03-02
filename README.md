@@ -1,6 +1,11 @@
 # State Machine Controller for Unity
 StateMachineController is a modular finite state machine (FSM) controller for Unity.
 
+#### Features
+* Modular FSM system
+* Pass custom arguments when changing states
+* Supports multiple state machines
+
 ##### Example 1 - Changing the active state.
 ```cs
 this.StateMachine.ChangeState(typeof(StatePlayerTurn));
