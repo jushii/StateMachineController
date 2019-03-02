@@ -1,69 +1,21 @@
-[readme and repository are work in progress]
+# State Machine Controller for Unity
+StateMachineController is a modular finite state machine (FSM) controller for Unity.
 
-# StateMachineController (for Unity)
-StateMachineController is a finite state machine (FSM) controller for Unity. Divide your game logic multiple state machines and let StateMachineController take care of running their Update methods.
-
-Changing a state is simple!
-
-call `this.StateMachine.ChangeState((int)BattleMode.MOVING, (object)null);`
-
-Need to pass custom data to the next state?
-
-call `this.StateMachine.ChangeState((int)BattleMode.END_BATTLE, BattleData);`
-
-Want to change the active state machine?
-
-call `this.StateMachine.ChangeStateMachine(StateMachineType.SHOP);`
-
-#### Features
-* A single class for updating all your state machines
-    * StateMachineController class runs Update(), FixedUpdate() and LateUpdate() for all your state machines
-* MasterStateMachine class can hold multiple state machines (or just one)
-    * StateMachine can call MasterStateMachine to change the active state machine
-    * You can have multiple MasterStateMachines running at the same time
-* Pass your own data to other states when changing states
-1) Bundle your custom data in one state
+##### Example 1 - Changing the active state.
+```cs
+this.StateMachine.ChangeState(typeof(StatePlayerTurn));
 ```
-// Bundle your custom data
-CastSkillMessage msg = new CastSkillMessage();
-msg.User = this.user;
-msg.Target = this.target;
-msg.Skill = this.skill;
-// Pass the data to the next state as a parameter
-this.StateMachine.ChangeState((int)BattleModeState.CASTING_SKILL, msg);
-```
-2) Verify and use your data in the next state
-```
-public override void EnterState<T>(T message)
+##### Example 2 - Passing data when changing the state.
+```cs
+SpellData spellData = new SpellData()
 {
-  CastSkillMessage msg = message as CastSkillMessage;
-  if (msg == null)
-  {
-      Debug.LogError("@StateBattleCastingSkill: EnterState message is null");
-      return;
-  }
+   attackPower = 120,
+   coolDown = 5
+};
 
-  this.msg = msg;
-  this.msg.Skill.Resolve(this.msg.User, this.msg.Target, () => 
-  {
-      Debug.Log("apply effects");
-  });
-}
+this.StateMachine.ChangeState(typeof(StateCastingSpell), spellData);
 ```
-
-## Classes
-### StateMachineController
-Holds a collection of MasterStateMachines and calls their Update(), FixedUpdate() and LateUpdate() methods.
-
-### MasterStateMachine
-MasterStateMachine can hold either one or multiple state machines. It can be seen as a collection of related StateMachines where one StateMachine can be active at a time.
-    
-For example: in a turn-based game there could be one state machine for EXPLORATION_MODE and one BATTLE_MODE.
-A single MasterStateMachine could have a reference to these two state machines - and these two state machines
-could call the MasterStateMachine to change the current active StateMachine.
-     
-### StateMachine
-StateMachine holds a collection of different states.
-
-### State
-This is where the magic happens.
+##### Example 3 - Changing the active state machine.
+```cs
+this.StateMachine.ChangeStateMachine(typeof(BattleModeStateMachine), typeof(StateBattleStart));
+```
